@@ -1,0 +1,2 @@
+install:
+	glide install

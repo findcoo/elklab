@@ -1,0 +1,5 @@
+package: quicket.co.kr/qsearch
+import:
+- package: github.com/elastic/go-elasticsearch
+- package: gopkg.in/olivere/elastic.v5
+  version: ~5.0.43
