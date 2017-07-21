@@ -1,7 +1,7 @@
 version: '3'
 services:
  elasticsearch:
-  image: docker.elastic.co/elasticsearch/elasticsearch:5.5.0 
+  image: dock.quicket.co.kr/elasticsearch:snp
   ulimits:
    memlock:
     soft: -1
@@ -18,9 +18,6 @@ services:
    - '9200:9200'
 
  kibana:
-  image: docker.elastic.co/kibana/kibana:5.5.0
-  environment:
-   - 'http.host=0.0.0.0'
-   - 'transport.host=127.0.0.1'
+  image: dock.quicket.co.kr/kibana:snp
   ports:
    - '5601:5601'
