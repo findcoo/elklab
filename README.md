@@ -4,3 +4,7 @@
 
 ### Road map ###
 * elasticsearch 환경 구축
+
+
+### Goal ###
+* Almost realtime excution
