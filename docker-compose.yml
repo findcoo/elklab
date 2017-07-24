@@ -16,6 +16,7 @@ services:
    - 'transport.host=127.0.0.1'
   ports:
    - '9200:9200'
+   - '9300:9300'
 
  kibana:
   image: dock.quicket.co.kr/kibana:snp
