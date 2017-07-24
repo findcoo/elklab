@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"reflect"
 
@@ -14,6 +15,17 @@ type TestDoc struct {
 	Second string
 }
 
+const indexSetting = `
+{
+	"settings": {
+		"index": {
+			"number_of_shards": 3,
+			"number_of_replicas": 0
+		}
+	}
+}
+`
+
 // ES elastic search 클라이언트 구조체
 type ES struct {
 	client *elastic.Client
@@ -22,9 +34,13 @@ type ES struct {
 
 // NewES elastic search v5 이상의 클라이언트 생성
 func NewES() *ES {
-	conn, err := elastic.NewClient()
+	conn, err := elastic.NewClient(
+		elastic.SetBasicAuth("elastic", "changeme"),
+		elastic.SetSniff(false),
+	)
+
 	if err != nil {
-		log.Fatal()
+		log.Fatal(err)
 	}
 
 	es := &ES{
@@ -37,9 +53,16 @@ func NewES() *ES {
 
 // NewTestIndex 테스트 인덱스 생성
 func (e *ES) NewTestIndex() {
-	_, err := e.client.CreateIndex("test").Do(e.ctx)
+	exists, err := e.client.IndexExists("test").Do(e.ctx)
 	if err != nil {
 		log.Panic(err)
+	}
+
+	if !exists {
+		_, err := e.client.CreateIndex("test").BodyString(indexSetting).Do(e.ctx)
+		if err != nil {
+			log.Panic(err)
+		}
 	}
 }
 
@@ -47,11 +70,11 @@ func (e *ES) NewTestIndex() {
 func (e *ES) SetTestDoc() {
 	testDoc := TestDoc{First: "Hello", Second: "world"}
 
-	_, err := e.client.Index().Index("testDoc1").
+	_, err := e.client.Index().Index("test").
 		Type("test").
 		Id("1").
 		BodyJson(testDoc).
-		Refresh(true).
+		Refresh("true").
 		Do(e.ctx)
 	if err != nil {
 		log.Panic(err)
@@ -59,10 +82,10 @@ func (e *ES) SetTestDoc() {
 }
 
 // QueryTest 테스트 쿼리
-func (e *ES) QueryTest(params) {
+func (e *ES) QueryTest() {
 	query := elastic.NewTermQuery("first", "Hello")
 	result, err := e.client.Search().
-		Index(testDoc1).
+		Index("test").
 		Query(query).
 		Sort("first", true).
 		From(0).Size(10).
@@ -73,7 +96,6 @@ func (e *ES) QueryTest(params) {
 	}
 
 	var testDoc TestDoc
-
 	for _, item := range result.Each(reflect.TypeOf(testDoc)) {
 		if t, ok := item.(TestDoc); ok {
 			log.Printf("search result: %s", t.First)
@@ -81,6 +103,19 @@ func (e *ES) QueryTest(params) {
 	}
 }
 
+// Ping elasticsearch 서버의 현재 상태를 검사한다.
+func (e *ES) Ping() {
+	info, code, err := e.client.Ping("http://127.0.0.1:9200").Do(e.ctx)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Printf("Elasticsearch returned with code %d and version %s\n", code, info.Version.Number)
+}
+
 func main() {
-	es := NewES()
+	e := NewES()
+	e.NewTestIndex()
+	e.SetTestDoc()
+	e.QueryTest()
 }

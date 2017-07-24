@@ -12,8 +12,7 @@ services:
   cap_add:
    - 'IPC_LOCK'
   environment:
-   - 'bootstrap.memory_lock=true'
-   - 'ES_JAVA_OPTS=-Xms2g -Xmx2g'
+   - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
    - 'http.host=0.0.0.0'
    - 'transport.host=127.0.0.1'
   ports:
@@ -22,5 +21,7 @@ services:
 
  kibana:
   image: dock.quicket.co.kr/kibana:snp
+  links:
+   - elasticsearch
   ports:
    - '5601:5601'
