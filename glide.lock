@@ -1,8 +1,0 @@
-hash: 834e1020230b4a852b1f655218f1ca293650366c5a619a3469320e9a4319259c
-updated: 2017-07-21T13:28:41.868554957+09:00
-imports:
-- name: github.com/elastic/go-elasticsearch
-  version: d4a08955f1242e9790357f8bd1d8252f23e8b5c2
-- name: gopkg.in/olivere/elastic.v5
-  version: f5030c016b49a6fb0e1958bc765562246c0a912c
-testImports: []
