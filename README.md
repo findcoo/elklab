@@ -1,10 +1,6 @@
-## SearchNPush
-
-  검색 알림 최적화를 위한 프로젝트
-
-### Road map ###
-* elasticsearch 환경 구축
-
+## elklab
+  
+  ELK 스택 훈련을 위한 저장소
 
 ### Goal ###
-* Almost realtime excution
+* Mastering ELK
