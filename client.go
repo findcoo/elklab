@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"reflect"
 
@@ -15,21 +16,21 @@ type TestDoc struct {
 	Second string
 }
 
-const indexSetting = `
-{
-	"settings": {
-		"index": {
-			"number_of_shards": 3,
-			"number_of_replicas": 0
-		}
-	}
-}
-`
+var indexSetting = readMapping()
 
 // ES elastic search 클라이언트 구조체
 type ES struct {
 	client *elastic.Client
 	ctx    context.Context
+}
+
+type TestKoreanDoc struct {
+	ID       int64     `json:"id"`
+	Name     string    `json:"name"`
+	Message  string    `json:"message"`
+	Address  string    `json:"address"`
+	Location []float64 `json:"location"`
+	Phone    string    `json:"phone"`
 }
 
 // NewES elastic search v5 이상의 클라이언트 생성
@@ -68,12 +69,19 @@ func (e *ES) NewTestIndex() {
 
 // SetTestDoc 테스트 도큐먼트 생성
 func (e *ES) SetTestDoc() {
-	testDoc := TestDoc{First: "Hello", Second: "world"}
+	doc := TestKoreanDoc{
+		ID:       1,
+		Message:  "한글 korean 테스트",
+		Name:     "정의성",
+		Address:  "서울특별시 한글동 1 번지",
+		Location: []float64{0.1, 0.22},
+		Phone:    "000-0000-0000",
+	}
 
 	_, err := e.client.Index().Index("test").
 		Type("test").
 		Id("1").
-		BodyJson(testDoc).
+		BodyJson(doc).
 		Refresh("true").
 		Do(e.ctx)
 	if err != nil {
@@ -111,6 +119,14 @@ func (e *ES) Ping() {
 	}
 
 	fmt.Printf("Elasticsearch returned with code %d and version %s\n", code, info.Version.Number)
+}
+
+func readMapping() string {
+	buff, err := ioutil.ReadFile("./mapping.json")
+	if err != nil {
+		log.Fatal(err)
+	}
+	return string(buff)
 }
 
 func main() {

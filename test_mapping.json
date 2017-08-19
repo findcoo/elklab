@@ -1,0 +1,41 @@
+{
+	"settings": {
+		"index": {
+			"number_of_shards": 3,
+			"number_of_replicas": 0
+		}
+	},
+  "mappings": {
+    "_default_": {
+        "_all":{ "enabled": false }
+    },
+    "test_korean": {
+      "properties": {
+        "id": {"type": "long"},
+        "name": {
+          "type": "text",
+          "analyzer": "openkoreantext-analyzer",
+          "store": true,
+          "fielddata": true
+        },
+        "message": {
+          "type": "text",
+          "analyzer": "openkoreantext-analyzer",
+          "store": true,
+          "fielddata": true 
+        },
+        "address": {
+          "type": "text",
+          "analyzer": "openkoreantext-analyzer",
+          "store": true,
+          "fielddata": true
+        }, 
+        "location": {"type": "geo_point"},
+        "phone": {
+          "type": "text",
+          "fielddata": true
+        }
+      }
+    }
+  }
+}
