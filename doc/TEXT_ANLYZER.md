@@ -195,6 +195,8 @@ dns는 domain name system의 약어이다.
 
 분석기와 비슷하지만 차이점으로 토큰을 생성하지 않는다. 오직 하나의 문장으로 변경한다. 문자단위로만 작동하는 token filter와 char filter만 사용할 수 있다.
 
+`keyword` type 필드에만 사용할 수 있다.
+
 
 
 
